@@ -20,8 +20,12 @@ require_once("config.php");
 // echo $usuario;
 
 //Inserir usuários no banco de dados
-$aluno = new Usuario("aluno2","@lun02");
-$aluno->insert();
-echo $aluno; 
+// $aluno = new Usuario("aluno2","@lun02");
+// $aluno->insert();
+// echo $aluno; 
 
+//Update
+$usuario = new Usuario();
+$usuario->loadById(6);
+$usuario->update("professor", "prof");
 ?>
