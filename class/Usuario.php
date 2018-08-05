@@ -33,6 +33,7 @@ class Usuario {
         $this->dtcadastro = $value;
     }
 
+    //Carrega os dados de um usuário especifico por ID
     public function loadById($id){
         $sql = new Sql();
         $results = $sql->select("SELECT * FROM tb_usuarios WHERE idusuario = :ID", array(
@@ -46,6 +47,40 @@ class Usuario {
             $this->setDessenha($row['dessenha']);
             $this->setDtcadastro(new DateTime($row['dtcadastro']));
 
+        }
+    }
+
+    //Carrega todos os usuários
+    public static function getList(){
+        $sql = new Sql();
+        return $sql->select("SELECT * FROM tb_usuarios ORDER BY deslogin;");
+    }
+
+    //Busca os usuários com uma parte da palavra ex: jo carrega todos os usuários que contenham jo no nome. Ex: José e João
+    public static function search($login){
+        $sql = new Sql();
+
+        return $sql->select("SELECT * FROM tb_usuarios WHERE deslogin LIKE :SEARCH ORDER BY deslogin", array(
+            ':SEARCH'=>"%".$login."%"
+        ));
+    }
+
+    //Carrega o usuário com senha e login de acordo que tenha no banco de dados. Se um dos campos não corresponder com o banco então vai jogar a exception
+    public function login($login, $password){
+        $sql = new Sql();
+        $results = $sql->select("SELECT * FROM tb_usuarios WHERE deslogin = :LOGIN AND dessenha = :PASSWORD", array(
+            ":LOGIN"=>$login, 
+            ":PASSWORD"=>$password
+        ));
+
+        if(count($results) > 0){
+            $row = $results[0];
+            $this->setIdusuario($row['idusuario']);
+            $this->setDeslogin($row['deslogin']);
+            $this->setDessenha($row['dessenha']);
+            $this->setDtcadastro(new DateTime($row['dtcadastro']));
+        }else{
+            throw new Exception("Login e/ou senha inválidos");
         }
     }
 
